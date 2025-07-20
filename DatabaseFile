@@ -1,0 +1,708 @@
+Create Database Math_Project
+
+---------------------------Tables--------------------------------------
+CREATE TABLE Grade (
+    GradeID INT PRIMARY KEY,
+    Name NVARCHAR(255)
+);
+
+CREATE TABLE Subject (
+    SubjectID INT PRIMARY KEY,
+    Name NVARCHAR(255)
+);
+
+CREATE TABLE GradewiseSubject (
+    GradewiseSubjectID INT PRIMARY KEY,
+    GradeID INT FOREIGN KEY REFERENCES Grade(GradeID),
+    SubjectID INT FOREIGN KEY REFERENCES Subject(SubjectID)
+);
+
+CREATE TABLE Chapter (
+    ChapterID INT PRIMARY KEY,
+    ChapterName NVARCHAR(255),
+    SubjectID INT FOREIGN KEY REFERENCES Subject(SubjectID),
+    Sequence INT
+);
+
+CREATE TABLE Skill (
+    SkillID INT PRIMARY KEY,
+    SkillName NVARCHAR(255),
+    Sequence INT,
+    ShortDescription NVARCHAR(MAX)
+);
+
+CREATE TABLE GradewiseChapter (
+    GradewiseChapterID INT PRIMARY KEY,
+    GradeID INT FOREIGN KEY REFERENCES Grade(GradeID),
+    ChapterID INT FOREIGN KEY REFERENCES Chapter(ChapterID),
+    Sequence INT
+);
+
+CREATE TABLE GradeWiseSkill (
+    GradeWiseSkillID INT IDENTITY(1,1) PRIMARY KEY,
+    GradeID INT FOREIGN KEY REFERENCES Grade(GradeID),
+    SkillID INT FOREIGN KEY REFERENCES Skill(SkillID),
+	ChapterID INT FOREIGN KEY REFERENCES Chapter(ChapterID),
+    Sequence INT
+);
+
+CREATE TABLE SkillRoutes (
+    SkillRoutesID INT IDENTITY(1,1) PRIMARY KEY,
+    ControllerName NVARCHAR(50),
+    ActionName NVARCHAR(50),
+	SkillID INT FOREIGN KEY REFERENCES Skill(SkillID),
+);
+
+
+
+----------------------------------------------------------ADMIN PANEL-------------------------------------------------
+
+---------------------------------------Drop Down Procedure
+
+CREATE PROCEDURE PR_Grade_DropDown
+AS
+BEGIN
+    SELECT 
+        [dbo].[Grade].[GradeID], 
+        [dbo].[Grade].[Name]
+		FROM [dbo].[Grade];
+END;
+
+CREATE PROCEDURE PR_Subject_DropDown
+AS
+BEGIN
+    SELECT 
+        [dbo].[Subject].[SubjectID], 
+        [dbo].[Subject].[Name]
+    FROM [dbo].[Subject];
+END;
+
+CREATE PROCEDURE PR_Chapter_DropDown 
+AS
+BEGIN
+    SELECT 
+        [dbo].[Chapter].[ChapterID], 
+        [dbo].[Chapter].[ChapterName]
+	FROM 
+		[dbo].[Chapter]
+END;
+
+CREATE PROCEDURE PR_Skill_DropDown 
+AS
+BEGIN
+    SELECT 
+        [dbo].[Skill].[SkillID] ,
+        [dbo].[Skill].SkillName
+	FROM 
+		[dbo].[Skill]
+END;
+
+
+
+
+
+
+
+
+
+
+------------------------------------------1. Stored Procedure to Insert Data
+-- Insert into Grade
+CREATE PROCEDURE PR_Insert_Grade
+    @Name NVARCHAR(255)
+AS
+BEGIN
+    INSERT INTO Grade (Name)
+    VALUES (@Name);
+END;
+
+CREATE PROCEDURE PR_Insert_Subject
+    @Name NVARCHAR(255)
+AS
+BEGIN
+    INSERT INTO Subject ( Name)
+    VALUES (@Name);
+END;
+
+CREATE PROCEDURE PR_Insert_GradewiseSubject
+    @GradeID INT,
+    @SubjectID INT
+AS
+BEGIN
+    INSERT INTO GradewiseSubject ( GradeID, SubjectID)
+    VALUES ( @GradeID, @SubjectID);
+END;
+
+-- Insert into Skill
+ALTER PROCEDURE PR_Insert_Skill
+    @SkillName NVARCHAR(255),
+	@Sequence INT,
+    @ShortDescription NVARCHAR(MAX)
+AS
+BEGIN
+    INSERT INTO Skill ( SkillName, Sequence, ShortDescription)
+    VALUES (  @SkillName, @Sequence, @ShortDescription);
+END;
+
+CREATE PROCEDURE PR_Insert_Chapter
+    @ChapterName NVARCHAR(255),
+    @SubjectID INT,
+    @Sequence INT
+AS
+BEGIN
+    INSERT INTO Chapter ( ChapterName, SubjectID, Sequence)
+    VALUES ( @ChapterName, @SubjectID, @Sequence);
+END;
+
+CREATE PROCEDURE PR_Insert_GradewiseChapter
+    @GradeID INT,
+    @ChapterID INT,
+    @Sequence INT
+AS
+BEGIN
+    INSERT INTO GradewiseChapter ( GradeID, ChapterID, Sequence)
+    VALUES ( @GradeID, @ChapterID, @Sequence);
+END;
+
+ALTER PROCEDURE PR_Insert_GradeWiseSkill
+    @GradeID INT,
+    @SkillID INT,
+	@chapterID INT,
+    @Sequence INT
+AS
+BEGIN
+    INSERT INTO GradeWiseSkill (GradeID, SkillID, ChapterID,Sequence)
+    VALUES (@GradeID, @SkillID,@chapterID, @Sequence);
+END;
+
+CREATE PROCEDURE PR_SkillRoutes_Insert 
+    @ControllerName NVARCHAR(50),
+    @ActionName NVARCHAR(50),
+    @SkillID INT
+AS
+BEGIN
+    INSERT INTO SkillRoutes (ControllerName, ActionName, SkillID)
+    VALUES (@ControllerName, @ActionName, @SkillID);
+END;
+
+
+------------------------------------------2. Stored Procedure to Select All Data
+
+-- Get all Grades
+CREATE PROCEDURE PR_SelectAll_Grade
+AS
+BEGIN
+    SELECT 
+        [dbo].[Grade].[GradeID], 
+        [dbo].[Grade].[Name]
+		FROM [dbo].[Grade];
+END;
+
+-- Get all Subjects
+CREATE PROCEDURE PR_SelectAll_Subject
+AS
+BEGIN
+    SELECT 
+        [dbo].[Subject].[SubjectID], 
+        [dbo].[Subject].[Name]
+    FROM [dbo].[Subject];
+END;
+
+-- Get all Gradewise Subjects with Grade and Subject details
+ALTER PROCEDURE PR_SelectAll_GradewiseSubject
+AS
+BEGIN
+    SELECT 
+        [dbo].[GradewiseSubject].[GradewiseSubjectID], 
+        [dbo].[GradewiseSubject].[GradeID], 
+        [dbo].[Grade].[Name] AS GradeName, 
+        [dbo].[GradewiseSubject].[SubjectID], 
+        [dbo].[Subject].[Name] AS SubjectName
+    FROM [dbo].[GradewiseSubject]
+    INNER JOIN [dbo].[Grade] ON [dbo].[GradewiseSubject].[GradeID] = [dbo].[Grade].[GradeID]
+    INNER JOIN [dbo].[Subject] ON [dbo].[GradewiseSubject].[SubjectID] = [dbo].[Subject].[SubjectID]
+	order by [dbo].[GradewiseSubject].[SubjectID];
+END;
+
+-- Get all Skills with Grade details
+ALTER PROCEDURE PR_SelectAll_Skill
+AS
+BEGIN
+    SELECT 
+        [dbo].[Skill].[SkillID], 
+        [dbo].[Skill].[SkillName],
+        [dbo].[Skill].[Sequence], 
+        [dbo].[Skill].[ShortDescription] 
+    FROM [dbo].[Skill]
+END;
+
+-- Get all Chapters with Subject details
+CREATE PROCEDURE PR_SelectAll_Chapter
+AS
+BEGIN
+    SELECT 
+        [dbo].[Chapter].[ChapterID], 
+        [dbo].[Chapter].[ChapterName], 
+        [dbo].[Chapter].[SubjectID], 
+        [dbo].[Subject].[Name] AS SubjectName, 
+        [dbo].[Chapter].[Sequence] 
+    FROM [dbo].[Chapter]
+    INNER JOIN [dbo].[Subject] ON [dbo].[Chapter].[SubjectID] = [dbo].[Subject].[SubjectID];
+END;
+
+-- Get all Gradewise Chapters with Grade and Chapter details
+CREATE PROCEDURE PR_SelectAll_GradewiseChapter
+AS
+BEGIN
+    SELECT 
+        [dbo].[GradewiseChapter].[GradewiseChapterID], 
+        [dbo].[GradewiseChapter].[GradeID], 
+        [dbo].[Grade].[Name] AS GradeName, 
+        [dbo].[GradewiseChapter].[ChapterID], 
+        [dbo].[Chapter].[ChapterName], 
+        [dbo].[GradewiseChapter].[Sequence] 
+    FROM [dbo].[GradewiseChapter]
+    INNER JOIN [dbo].[Grade] ON [dbo].[GradewiseChapter].[GradeID] = [dbo].[Grade].[GradeID]
+    INNER JOIN [dbo].[Chapter] ON [dbo].[GradewiseChapter].[ChapterID] = [dbo].[Chapter].[ChapterID];
+END;
+
+ALTER PROCEDURE PR_GetAll_GradeWiseSkill
+AS
+BEGIN
+    SELECT 
+        GradeWiseSkill.GradeWiseSkillID,
+        GradeWiseSkill.Sequence,
+		GradeWiseSkill.ChapterID,
+		Chapter.ChapterName,
+        GradeWiseSkill.GradeID,
+        Grade.Name AS GradeName,
+        GradeWiseSkill.SkillID,
+        Skill.SkillName,
+        Skill.ShortDescription
+    FROM GradeWiseSkill
+    INNER JOIN Grade ON GradeWiseSkill.GradeID = Grade.GradeID
+    INNER JOIN Skill ON GradeWiseSkill.SkillID = Skill.SkillID
+	INNER JOIN Chapter ON GradeWiseSkill.ChapterID = Chapter.ChapterID
+END;
+
+CREATE PROCEDURE PR_GETALL_SkillRoutes
+AS
+BEGIN
+    SELECT sr.SkillRoutesID, sr.ControllerName, sr.ActionName, sr.SkillID, s.SkillName
+    FROM SkillRoutes sr
+    JOIN Skill s ON sr.SkillID = s.SkillID;
+END;
+
+
+------------------------------------------3. Stored Procedure to Select Data by ID
+-- Get Grade by ID
+CREATE PROCEDURE PR_SelectByID_Grade
+    @GradeID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[Grade].[GradeID], 
+        [dbo].[Grade].[Name]
+    FROM [dbo].[Grade]
+    WHERE [dbo].[Grade].[GradeID] = @GradeID;
+END;
+
+-- Get Subject by ID
+CREATE PROCEDURE PR_SelectByID_Subject
+    @SubjectID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[Subject].[SubjectID], 
+        [dbo].[Subject].[Name]
+    FROM [dbo].[Subject]
+    WHERE [dbo].[Subject].[SubjectID] = @SubjectID;
+END;
+
+-- Get Gradewise Subject by ID (with Grade and Subject details)
+CREATE PROCEDURE PR_SelectByID_GradewiseSubject
+    @GradewiseSubjectID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[GradewiseSubject].[GradewiseSubjectID], 
+        [dbo].[GradewiseSubject].[GradeID], 
+        [dbo].[Grade].[Name] AS GradeName, 
+        [dbo].[GradewiseSubject].[SubjectID], 
+        [dbo].[Subject].[Name] AS SubjectName
+    FROM [dbo].[GradewiseSubject]
+    INNER JOIN [dbo].[Grade] ON [dbo].[GradewiseSubject].[GradeID] = [dbo].[Grade].[GradeID]
+    INNER JOIN [dbo].[Subject] ON [dbo].[GradewiseSubject].[SubjectID] = [dbo].[Subject].[SubjectID]
+    WHERE [dbo].[GradewiseSubject].[GradewiseSubjectID] = @GradewiseSubjectID;
+END;
+
+-- Get Skill by ID (with Grade details)
+ALTER PROCEDURE PR_SelectByID_Skill
+    @SkillID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[Skill].[SkillID], 
+        [dbo].[Skill].[SkillName],
+        [dbo].[Skill].[Sequence], 
+        [dbo].[Skill].[ShortDescription] 
+    FROM [dbo].[Skill]
+    WHERE [dbo].[Skill].[SkillID] = @SkillID;
+END;
+
+-- Get Chapter by ID (with Subject details)
+CREATE PROCEDURE PR_SelectByID_Chapter
+    @ChapterID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[Chapter].[ChapterID], 
+        [dbo].[Chapter].[ChapterName], 
+        [dbo].[Chapter].[SubjectID], 
+        [dbo].[Subject].[Name] AS SubjectName, 
+        [dbo].[Chapter].[Sequence] 
+    FROM [dbo].[Chapter]
+    INNER JOIN [dbo].[Subject] ON [dbo].[Chapter].[SubjectID] = [dbo].[Subject].[SubjectID]
+    WHERE [dbo].[Chapter].[ChapterID] = @ChapterID;
+END;
+
+-- Get Gradewise Chapter by ID (with Grade and Chapter details)
+CREATE PROCEDURE PR_SelectByID_GradewiseChapter
+    @GradewiseChapterID INT
+AS
+BEGIN
+    SELECT 
+        [dbo].[GradewiseChapter].[GradewiseChapterID], 
+        [dbo].[GradewiseChapter].[GradeID], 
+        [dbo].[Grade].[Name] AS GradeName, 
+        [dbo].[GradewiseChapter].[ChapterID], 
+        [dbo].[Chapter].[ChapterName], 
+        [dbo].[GradewiseChapter].[Sequence] 
+    FROM [dbo].[GradewiseChapter]
+    INNER JOIN [dbo].[Grade] ON [dbo].[GradewiseChapter].[GradeID] = [dbo].[Grade].[GradeID]
+    INNER JOIN [dbo].[Chapter] ON [dbo].[GradewiseChapter].[ChapterID] = [dbo].[Chapter].[ChapterID]
+    WHERE [dbo].[GradewiseChapter].[GradewiseChapterID] = @GradewiseChapterID;
+END;
+
+ALTER PROCEDURE PR_SelectByID_GradeWiseSkill
+	@GradeWiseSkillID int
+AS
+BEGIN
+    SELECT 
+        GradeWiseSkill.GradeWiseSkillID,
+        GradeWiseSkill.Sequence,
+		GradeWiseSkill.ChapterID,
+		Chapter.ChapterName,
+        Grade.GradeID,
+        Grade.Name AS GradeName,
+        Skill.SkillID,
+        Skill.SkillName,
+        Skill.ShortDescription,
+        Chapter.ChapterID,
+        Chapter.ChapterName
+    FROM GradeWiseSkill
+    INNER JOIN Grade ON GradeWiseSkill.GradeID = Grade.GradeID
+    INNER JOIN Skill ON GradeWiseSkill.SkillID = Skill.SkillID
+    INNER JOIN Chapter ON GradeWiseSkill.ChapterID = Chapter.ChapterID
+	Where GradeWiseSkill.skillID = @GradeWiseSkillID;
+END;
+
+CREATE PROCEDURE PR_SelectByID_SkillRoutes
+	@SkillRoutesID INT
+AS
+BEGIN
+    SELECT sr.SkillRoutesID, sr.ControllerName, sr.ActionName, sr.SkillID, s.SkillName
+    FROM SkillRoutes sr
+    JOIN Skill s ON sr.SkillID = s.SkillID
+	Where Sr.SkillRoutesID = @SkillRoutesID;
+END;
+
+------------------------------------------4. Stored Procedure to Update Data
+-- Update Grade
+CREATE PROCEDURE PR_Update_Grade
+    @GradeID INT,
+    @Name NVARCHAR(255)
+AS
+BEGIN
+    UPDATE [dbo].[Grade]
+    SET 
+        [Name] = @Name
+    WHERE [GradeID] = @GradeID;
+END;
+
+-- Update Subject
+CREATE PROCEDURE PR_Update_Subject
+    @SubjectID INT,
+    @Name NVARCHAR(255)
+AS
+BEGIN
+    UPDATE [dbo].[Subject]
+    SET 
+        [Name] = @Name
+    WHERE [SubjectID] = @SubjectID;
+END;
+
+-- Update GradewiseSubject
+CREATE PROCEDURE PR_Update_GradewiseSubject
+    @GradewiseSubjectID INT,
+    @GradeID INT,
+    @SubjectID INT
+AS
+BEGIN
+    UPDATE [dbo].[GradewiseSubject]
+    SET 
+        [GradeID] = @GradeID,
+        [SubjectID] = @SubjectID
+    WHERE [GradewiseSubjectID] = @GradewiseSubjectID;
+END;
+
+-- Update Skill
+ALTER PROCEDURE PR_Update_Skill
+    @SkillID INT,
+    @SkillName NVARCHAR(255),
+    @Sequence INT,
+    @ShortDescription NVARCHAR(MAX)
+AS
+BEGIN
+    UPDATE [dbo].[Skill]
+    SET 
+        [SkillName] = @SkillName,
+        [Sequence] = @Sequence,
+        [ShortDescription] = @ShortDescription
+    WHERE [SkillID] = @SkillID;
+END;
+
+-- Update Chapter
+CREATE PROCEDURE PR_Update_Chapter
+    @ChapterID INT,
+    @ChapterName NVARCHAR(255),
+    @SubjectID INT,
+    @Sequence INT
+AS
+BEGIN
+    UPDATE [dbo].[Chapter]
+    SET 
+        [ChapterName] = @ChapterName,
+        [SubjectID] = @SubjectID,
+        [Sequence] = @Sequence
+    WHERE [ChapterID] = @ChapterID;
+END;
+
+-- Update GradewiseChapter
+CREATE PROCEDURE PR_Update_GradewiseChapter
+    @GradewiseChapterID INT,
+    @GradeID INT,
+    @ChapterID INT,
+    @Sequence INT
+AS
+BEGIN
+    UPDATE [dbo].[GradewiseChapter]
+    SET 
+        [GradeID] = @GradeID,
+        [ChapterID] = @ChapterID,
+        [Sequence] = @Sequence
+    WHERE [GradewiseChapterID] = @GradewiseChapterID;
+END;
+
+ALTER PROCEDURE PR_Update_GradeWiseSkill
+    @GradeWiseSkillID INT,
+    @GradeID INT,
+    @SkillID INT,
+    @Sequence INT,
+	@ChapterID INT
+AS
+BEGIN
+    UPDATE GradeWiseSkill
+    SET GradeID = @GradeID,
+        SkillID = @SkillID,
+        Sequence = @Sequence,
+		ChapterID = @ChapterID
+    WHERE GradeWiseSkillID = @GradeWiseSkillID;
+END;
+
+CREATE PROCEDURE PR_Update_SkillRoutes
+    @SkillRoutesID INT,
+    @ControllerName NVARCHAR(50),
+    @ActionName NVARCHAR(50),
+    @SkillID INT
+AS
+BEGIN
+    UPDATE SkillRoutes
+    SET ControllerName = @ControllerName,
+        ActionName = @ActionName,
+        SkillID = @SkillID
+    WHERE SkillRoutesID = @SkillRoutesID;
+END;
+
+
+------------------------------------------5. Stored Procedure to Delete Data
+
+-- Delete a Grade by ID
+CREATE PROCEDURE PR_Delete_Grade
+    @GradeID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[Grade]
+    WHERE [GradeID] = @GradeID;
+END;
+
+-- Delete a Subject by ID
+CREATE PROCEDURE PR_Delete_Subject
+    @SubjectID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[Subject]
+    WHERE [SubjectID] = @SubjectID;
+END;
+
+-- Delete a GradewiseSubject by ID
+CREATE PROCEDURE PR_Delete_GradewiseSubject
+    @GradewiseSubjectID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[GradewiseSubject]
+    WHERE [GradewiseSubjectID] = @GradewiseSubjectID;
+END;
+
+-- Delete a Skill by ID
+CREATE PROCEDURE PR_Delete_Skill 
+    @SkillID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[Skill]
+    WHERE [SkillID] = @SkillID;
+END;
+
+-- Delete a Chapter by ID
+CREATE PROCEDURE PR_Delete_Chapter
+    @ChapterID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[Chapter]
+    WHERE [ChapterID] = @ChapterID;
+END;
+
+-- Delete a GradewiseChapter by ID
+CREATE PROCEDURE PR_Delete_GradewiseChapter
+    @GradewiseChapterID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[GradewiseChapter]
+    WHERE [GradewiseChapterID] = @GradewiseChapterID;
+END;
+
+CREATE PROCEDURE PR_Delete_GradeWiseSkill
+    @GradeWiseSkillID INT
+AS
+BEGIN
+    DELETE FROM GradeWiseSkill
+    WHERE GradeWiseSkillID = @GradeWiseSkillID;
+END;
+
+CREATE PROCEDURE PR_Delete_SkillRoutes
+    @SkillRoutesID INT
+AS
+BEGIN
+    DELETE FROM SkillRoutes WHERE SkillRoutesID = @SkillRoutesID;
+END;
+
+
+----------------------------------------------------------Fronted PANEL-------------------------------------------------
+
+--------------------- Fetch grades for a selected subject
+CREATE PROCEDURE PR_GetGradesBySubject 
+    @SubjectID INT
+AS
+BEGIN
+    SELECT DISTINCT g.GradeID, g.Name
+    FROM [dbo].[GradewiseSubject] gs
+    INNER JOIN [dbo].[Grade] g ON gs.GradeID = g.GradeID
+    WHERE gs.SubjectID = @SubjectID
+    ORDER BY g.Name;	
+END;
+
+----------------------- Fetch chapters for a selected grade & subject
+CREATE PROCEDURE PR_GetChaptersBySubjectAndGrade
+    @SubjectID INT,
+    @GradeID INT
+AS
+BEGIN
+    SELECT c.ChapterID, c.ChapterName, c.Sequence
+    FROM [dbo].[GradewiseChapter] gc
+    INNER JOIN [dbo].[Chapter] c ON gc.ChapterID = c.ChapterID
+    WHERE gc.GradeID = @GradeID
+    AND c.SubjectID = @SubjectID
+    ORDER BY c.Sequence;
+END;
+
+----------------------- Fetch Skills for a selected chapter & grade & subject
+alter PROCEDURE PR_GetSkillsByChapterGradeSubject 
+    @SubjectID INT,
+    @GradeID INT,
+    @ChapterID INT
+AS
+BEGIN
+    SELECT DISTINCT s.SkillID, s.SkillName, s.Sequence, s.ShortDescription
+    FROM [dbo].[GradeWiseSkill] gws
+    INNER JOIN [dbo].[Skill] s ON gws.SkillID = s.SkillID
+    INNER JOIN [dbo].[GradewiseChapter] gc ON gws.GradeID = gc.GradeID
+    INNER JOIN [dbo].[Chapter] c ON gws.ChapterID = c.ChapterID
+    WHERE gws.GradeID = @GradeID
+    AND gws.ChapterID = @ChapterID
+    AND c.SubjectID = @SubjectID
+    ORDER BY s.Sequence;
+END;
+	
+CREATE PROCEDURE PR_Worksheet_Grade_DropDown
+AS
+BEGIN
+    SELECT [GradeID], [Name] FROM [dbo].[Grade];
+END;
+
+CREATE PROCEDURE PR_Worksheet_Chapter_DropDown 
+    @GradeID INT
+AS
+BEGIN
+    SELECT 
+        gc.ChapterID,
+        c.ChapterName
+    FROM 
+        GradewiseChapter gc
+    INNER JOIN 
+        Chapter c ON gc.ChapterID = c.ChapterID
+    WHERE 
+        gc.GradeID = @GradeID
+END;
+
+
+CREATE PROCEDURE PR_Worksheet_Skill_DropDown 
+    @GradeID INT,
+    @ChapterID INT
+AS
+BEGIN
+     SELECT 
+        gws.SkillID,
+        s.SkillName
+    FROM 
+        GradeWiseSkill gws
+    INNER JOIN 
+        Skill s ON gws.SkillID = s.SkillID
+    WHERE 
+        gws.GradeID = @GradeID
+        AND gws.ChapterID = @ChapterID
+END;
+
+
+
+CREATE PROCEDURE PR_Details_All
+AS
+BEGIN
+    SELECT 
+        [dbo].[Subject].[SubjectID], 
+        [dbo].[Subject].[Name]
+    FROM [dbo].[Subject];
+END;
+
+
+
+
