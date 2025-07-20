@@ -1,0 +1,65 @@
+﻿@model DataTable
+@using System.Data;
+
+@{
+    ViewData["Title"] = "Skill List";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a asp-action="TableList" asp-controller="Home" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary"><i class="fas fa-cogs"></i> Skill List</h2>
+        <a asp-action="AddEditSkill" asp-controller="Skill" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Skill
+        </a>
+    </div>
+
+    @if (Model.Rows.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center">Skill ID</th>
+                        <th>Skill Name</th>
+                        <th>Sequence</th>
+                        <th>Short Description</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in Model.Rows)
+                    {
+                        <tr>
+                            <td class="text-center">@row["SkillID"]</td>
+                            <td>@row["SkillName"]</td>
+                            <td>@row["Sequence"]</td>
+                            <td>@row["ShortDescription"]</td>
+
+                            <td class="text-center d-flex">
+                                <a asp-action="AddEditSkill" asp-route-SkillID="@row["SkillID"]" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-action="SkillDelete" asp-route-SkillID="@row["SkillID"]" class="btn btn-danger btn-sm ms-1"
+                                   onclick="return confirm('Are you sure you want to delete this skill?');">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> No skills available.
+        </div>
+    }
+</div>

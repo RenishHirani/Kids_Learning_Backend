@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home - Kids Learning";
+}
+
+<div class="text-center">
+    <h1 class="display-3 text-primary fw-bold">🎉 Welcome to Kids Learning! 🎨📚</h1>
+    <p class="lead text-secondary">Fun and interactive lessons for young learners!</p>
+
+    
+
+    <p class="mt-4">Ready to start learning? 🚀</p>
+    <a asp-action="TableList" asp-controller="Home"  class="btn btn-primary btn-lg">Get Started</a>
+</div>
+
+<style>
+    body {
+        margin-top: 200px;
+        background-color: #f9f9f9;
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+</style>

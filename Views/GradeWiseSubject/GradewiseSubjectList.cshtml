@@ -1,0 +1,66 @@
+﻿@model DataTable
+@using System.Data;
+
+@{
+    ViewData["Title"] = "Gradewise Subject List";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a asp-action="TableList" asp-controller="Home" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary"><i class="fas fa-book"></i> Gradewise Subject List</h2>
+        <a asp-action="AddEditGradewiseSubject" asp-controller="GradewiseSubject" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Gradewise Subject
+        </a>
+    </div>
+
+    @if (Model.Rows.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center">Gradewise Subject ID</th>
+                        <th>Grade ID</th>
+                        <th>Grade Name</th>
+                        <th>Subject ID</th>
+                        <th>Subject Name</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in Model.Rows)
+                    {
+                        <tr>
+                            <td class="text-center">@row["GradewiseSubjectID"]</td>
+                            <td>@row["GradeID"]</td>
+                            <td>@row["GradeName"]</td>
+                            <td>@row["SubjectID"]</td>
+                            <td>@row["SubjectName"]</td>        
+                            <td class="text-center d-flex">
+                                <a asp-action="AddEditGradewiseSubject" asp-route-GradewiseSubjectID="@row["GradewiseSubjectID"]" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-action="GradewiseSubjectDelete" asp-route-GradewiseSubjectID="@row["GradewiseSubjectID"]" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to delete this record?');">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> No gradewise subjects available.
+        </div>
+    }
+</div>

@@ -1,0 +1,161 @@
+﻿@{
+    ViewData["Title"] = "Database Tables";
+}
+
+<style>
+    body {
+        margin-top: 200px;
+        background: linear-gradient(to right, #ffefba, #ffffff); /* Soft Gradient */
+        background: url('/images/math-bg.png') ;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .card {
+        border: none;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .highlight-heading {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(45deg, #007bff, #00c6ff);
+        padding: 10px 20px;
+        border-radius: 8px;
+        display: inline-block;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        margin-left: 500px;
+    }
+
+</style>
+
+<h2 class="text-center highlight-heading">Database Tables</h2>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Grade" asp-action="GradeList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-graduation-cap"></i>
+                        <h5 class="card-title">Grade</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Subject" asp-action="SubjectList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-book"></i>
+                        <h5 class="card-title">Subject</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <a asp-controller="GradeWiseSubject" asp-action="GradewiseSubjectList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-layer-group"></i>
+                        <h5 class="card-title">Gradewise Subject</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Chapter" asp-action="ChapterList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-scroll"></i>
+                        <h5 class="card-title">Chapter</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Skill" asp-action="SkillList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-lightbulb"></i>
+                        <h5 class="card-title">Skill</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <a asp-controller="GradewiseChapter" asp-action="GradewiseChapterList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-file-alt"></i>
+                        <h5 class="card-title">Gradewise Chapter</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a asp-controller="GradewiseSkill" asp-action="GradewiseSkillList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-file-alt"></i>
+                        <h5 class="card-title">Gradewise Skill</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a asp-controller="SkillRoutes" asp-action="SkillRoutesList" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-file-alt"></i>
+                        <h5 class="card-title">SkillRoutes Skill</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a asp-controller="TableGenerater" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="icon fas fa-file-alt"></i>
+                        <h5 class="card-title">Table</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- FontAwesome for Icons -->
+<script src="https://kit.fontawesome.com/YOUR-KIT-ID.js" crossorigin="anonymous"></script>

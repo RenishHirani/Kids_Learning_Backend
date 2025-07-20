@@ -1,0 +1,56 @@
+﻿@model SkillRoutesModel
+
+@{
+    ViewData["Title"] = Model.SkillRoutesID == 0 ? "Add Skill-Routes Skill" : "Edit Skill-Routes Skill";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-pen"></i> @ViewData["Title"]
+            </h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="SkillRouteSave" asp-controller="SkillRoutes" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="SkillRoutesID" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Skill</label>
+                    <select class="form-control" asp-for="SkillID">
+                        <option value="">Select Skill</option>
+                        @foreach (var skill in ViewBag.SkillList)
+                        {
+                            <option value="@skill.SkillID">@skill.SkillName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="SkillID" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Controller Name</label>
+                    <input type="text" asp-for="ControllerName" class="form-control" placeholder="Enter Controller name" required>
+                    <span asp-validation-for="ControllerName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Action Name</label>
+                    <input type="text" asp-for="ActionName" class="form-control" placeholder="Enter Action name" required>
+                    <span asp-validation-for="ActionName" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="SkillRoutesList" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Grade-wise Skill
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
